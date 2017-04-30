@@ -340,6 +340,19 @@ EOF
 	/bin/skicka init
 	wget ${skickaconfigurl} -O /root/.skicka.tokencache.json
 	/bin/skicka mkdir /backup/shadowsocksLogs/$(get_ip)
+	cat > /data/shadowsocks/logrotate <<EOF
+/data/shadowsocks/logs/shadowsocks.log {
+  rotate 5
+  missingok
+  dateext
+  notifempty
+  create 644 root root
+  sharedscripts
+  postrotate
+    /usr/bin/supervisorctl restart all
+  endscript
+}
+EOF
 	cat > /data/shadowsocks/logUpdate <<EOF
 #!/bin/sh
 /usr/sbin/logrotate -f /data/shadowsocks/logrotate
